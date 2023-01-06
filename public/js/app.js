@@ -1,93 +1,103 @@
-// PATIENT
-
-
-class patient {
-    constructor(nom, maladie, argent, poche, etatSante, traitement){
-        this.nom = nom;
-        this.maladie = maladie;
-        this.argent = argent;
-        this.poche = poche;
-        this.etatSante = etatSante;
-        this.traitement = traitement;
-
+class Malade {
+    constructor(nom, maladie, argent, poche, etatSante) {
+      this.nom = nom;
+      this.maladie = maladie;
+      this.argent = argent;
+      this.poche = poche;
+      this.etatSante = etatSante;
     }
-    goTo(){
-
+    goTo(endroit) {
+      console.log(`${this.nom} se rend à ${endroit}.`);
     }
-    takeCare(){
-
+    takeCare(medicament) {
+      console.log(`${this.nom} prend ${medicament}.`);
     }
-    paye(){
-
+    paye(montant) {
+      console.log(`${this.nom} paie ${montant}.`);
     }
-}
+  }
 
-let Marcus = new patient('Marcus','mal indenté',100,[],'malade','traitement');
-let Optimus = new patient('Optimus','unsave',200,[],'malade','traitement');
-let Sangoku = new patient('Sangoku','404',80,[],'malade','traitement');
-let DarthVader = new patient('DarthVader','azmatique',110,[],'malade','traitement');
-let Semicolon = new patient('Semicolon','syntaxError',60,[],'malade','traitement');
+  let malades = [
+    new Malade("Marcus", "mal indenté", 100, [], "malade"),
+    new Malade("Optimus", "unsave", 200, [], "malade"),
+    new Malade("Sangoku", "404", 80, [], "malade"),
+    new Malade("DarthVader", "azmatique", 110, [], "malade"),
+    new Malade("Semicolon", "syntaxError", 60, [], "malade"),
+  ];
 
-console.log(' ');
-console.log('Patient :');
-console.log(Marcus);
-console.log(Optimus);
-console.log(Sangoku);
-console.log(DarthVader);
-console.log(Semicolon);
-
-
-
-// DOCTEUR
-
-
-class docteur {
-    constructor(nom, argent, cabinet, diagnostique){
-        this.nom = nom;
-        this.argent = argent;
-        this.cabinet = cabinet;
-        this.diagnostique = diagnostique;
-        this.nom = nom;
+  
+  class Docteur {
+    constructor(nom, cabinet) {
+      this.nom = nom;
+      this.cabinet = cabinet;
     }
-    patientIn(){
-        
+    diagnostiquer(malade) {
+      console.log(`Le docteur diagnostique ${malade.nom}.`);
     }
-    diagnostique(){
-    
+    prescrire(malade) {
+      console.log(`Le docteur prescrit un traitement pour ${malade.nom}.`);
     }
-    patientOut(){
-        
+    paiement(malade, montant) {
+      console.log(`Le docteur reçoit ${montant} de ${malade.nom}.`);
     }
-}
+  }
 
-let Debugger = new docteur('Debugger',0,'chat');
+  let docteur = new Docteur("Debugger", ["chat"]);
 
-console.log(' ');
-console.log('Docteur :');
-console.log(Debugger);
-
-
-
-// PHARMACIE
-
-
-class pharmacie {
-    constructor(traitement, prix){
-        this.traitement = traitement;
-        this.prix = prix;
+  
+  class Pharmacie {
+    constructor(nom, medicaments) {
+      this.nom = nom;
+      this.medicaments = medicaments;
     }
-}
+    medocs(malade, medicament, prix) {
+      console.log(`La pharmacie vend ${medicament} à ${malade.nom} pour ${prix}.`);
+    }
+  }
 
-let ctrl = new pharmacie(`ctrl+maj+f`,60);
-let save = new pharmacie(`saveOnFocusChange`,100);
-let check = new pharmacie(`CheckLinkRelation`,35);
-let ventoline = new pharmacie(`Ventoline`,40);
-let f12 = new pharmacie(`f12+doc`,20);
 
-console.log(' ');
-console.log('Pharmacie / Traitements : ');
-console.log(ctrl);
-console.log(save);
-console.log(check);
-console.log(ventoline);
-console.log(f12);
+  let pharmacie = new Pharmacie("Medicaments", {
+    "ctrl+maj+f": 60,
+    "saveOnFocusChange": 100,
+    "CheckLinkRelation": 35,
+    "Ventoline": 40,
+    "f12+doc": 20,
+  });
+  
+  let traitements = {
+    "mal indenté": "ctrl+maj+f",
+    "unsave": "saveOnFocusChange",
+    "404": "CheckLinkRelation",
+    "azmatique": "Ventoline",
+    "syntaxError": "f12+doc",
+  };
+  
+
+  while (malades.length > 0) {
+    let malade = malades.shift();
+  
+    docteur.diagnostiquer(malade);
+    docteur.prescrire(malade);
+    docteur.paiement(malade, 50);
+    malade.etatSante = "en traitement";
+    malade.goTo("pharmacie");
+  
+    let medicament = traitements[malade.maladie];
+    let prix = pharmacie.medicaments[medicament];
+    if (malade.argent >= prix) {
+      malade.argent -= prix;
+      malade.poche = medicament;
+      pharmacie.medocs(malade, medicament, prix);
+    } else {
+      console.log(`${malade.nom} est mort car il n'a pas assez d'argent pour son traitement.`);
+      console.log(`${malade.nom} est poussé dans un cimetière.`);
+      continue;
+    }
+  
+    malade.takeCare(medicament);
+    malade.etatSante = "guéri";
+    console.log(`${malade.nom} est maintenant guéri.`);
+    console.log(" ");
+  }
+
+  
